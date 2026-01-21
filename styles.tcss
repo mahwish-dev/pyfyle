@@ -1,0 +1,30 @@
+Header {
+    text-style: bold;
+}
+
+#func_ip {
+    content-align: center middle;
+    padding: 1; 
+
+}
+
+#func_cat {
+    align-horizontal: center;
+}
+
+#root {
+    border: heavy #f38ba8;
+    padding: 0;
+    outline: #f38ba8 round;
+    layout: vertical;
+}
+
+FuncProgBar {
+    height: auto;
+    width: auto;
+    padding: 1;
+}
+
+Horizontal {
+    height: auto;
+}

@@ -3,6 +3,7 @@ from textual.widgets import Footer, Header, Static, Label, Checkbox, Collapsible
 from textual.containers import Vertical, Horizontal, Container, VerticalScroll
 from helper.CategoryBox import FuncProgBar
 import pandas as pd
+import sys
 
 class Pyfyle(App):
 
@@ -25,7 +26,8 @@ class Pyfyle(App):
                     yield Checkbox("Builtin", id="cb_bi")
                     yield Checkbox("Others", id="cb_oth")
 
-                df = pd.read_csv("profile_results.csv")
+                csv_path = sys.argv[1]
+                df = pd.read_csv(csv_path)
 
                 yield FuncProgBar("User-defined", df, _id="panel1")
                 yield FuncProgBar("Builtin", df, _id="panel2")

@@ -17,7 +17,7 @@ type FunctionCall struct {
 	CumtimePercall string
 }
 
-func Parse(rawOutput string) ([]FunctionCall, error) {
+func Parse(rawOutput string) ([]*FunctionCall, error) {
 	lines := strings.Split(rawOutput, "\n")
 	callsRe := regexp.MustCompile(`(\d+) function calls in (\d+\.\d+) seconds`)
 	lineNoRe := regexp.MustCompile(`:(\d+)\(`)
@@ -40,7 +40,7 @@ func Parse(rawOutput string) ([]FunctionCall, error) {
 		}
 	}
 	lines = lines[:breakIndex]
-	functionCalls := []FunctionCall{}
+	functionCalls := []*FunctionCall{}
 
 	for _, line := range lines {
 		lineNum := "~"
@@ -75,7 +75,7 @@ func Parse(rawOutput string) ([]FunctionCall, error) {
 		fc.LineNo = lineNum
 		fc.Function = functionName
 
-		functionCalls = append(functionCalls, fc)
+		functionCalls = append(functionCalls, &fc)
 
 	}
 	return functionCalls, nil

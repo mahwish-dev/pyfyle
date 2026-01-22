@@ -4,22 +4,22 @@ package config
 import flag "github.com/spf13/pflag"
 
 type Config struct {
-	noVenv          bool
-	venvPath        string
-	outputMarkdown  bool
-	template        string
-	includeBuiltins bool
-	sortby          string
+	NoVenv          bool
+	VenvPath        string
+	OutputMarkdown  bool
+	Template        string
+	IncludeBuiltins bool
+	SortBy          string
 }
 
 func MakeConfig() *Config {
 	conf := Config{}
-	flag.BoolVar(&conf.noVenv, "noVenv", false, "disable setting venv")
-	flag.StringVar(&conf.venvPath, "venvPath", "", "path to venv")
-	flag.BoolVar(&conf.outputMarkdown, "outputMarkdown", false, "output markdown")
-	flag.StringVar(&conf.template, "template", "", "path to markdown template")
-	flag.BoolVar(&conf.includeBuiltins, "includeBuiltins", true, "includeBuiltins")
-	flag.StringVar(&conf.sortby, "sortby", "", "sortby")
+	flag.BoolVar(&conf.NoVenv, "noVenv", false, "disable setting venv")
+	flag.StringVar(&conf.VenvPath, "venvPath", "", "path to venv")
+	flag.BoolVar(&conf.OutputMarkdown, "outputMarkdown", false, "output markdown")
+	flag.StringVar(&conf.Template, "template", "", "path to markdown template")
+	flag.BoolVar(&conf.IncludeBuiltins, "includeBuiltins", true, "includeBuiltins")
+	flag.StringVar(&conf.SortBy, "sortby", "", "sortby")
 	flag.Parse()
 
 	return &conf

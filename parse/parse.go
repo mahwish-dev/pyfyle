@@ -2,19 +2,24 @@
 package parse
 
 import (
+	"fmt"
+	"os"
 	"regexp"
 	"strings"
+	"time"
+
+	"github.com/gocarina/gocsv"
 )
 
 type FunctionCall struct {
-	Filename       string
-	LineNo         string
-	Function       string
-	Ncalls         string
-	Tottime        string
-	TottimePercall string
-	Cumtime        string
-	CumtimePercall string
+	Filename       string `csv:"filename"`
+	LineNo         string `csv:"line"`
+	Function       string `csv:"function"`
+	Ncalls         string `csv:"ncalls"`
+	Tottime        string `csv:"tottime"`
+	TottimePercall string `csv:"tottime_percall"`
+	Cumtime        string `csv:"cumtime"`
+	CumtimePercall string `csv:"cumtime_percall"`
 }
 
 func Parse(rawOutput string) ([]*FunctionCall, error) {
@@ -78,5 +83,19 @@ func Parse(rawOutput string) ([]*FunctionCall, error) {
 		functionCalls = append(functionCalls, &fc)
 
 	}
+	now := time.Now()
+
+	timestamp := now.Format("2006-01-02_15-04-05")
+
+	filename := fmt.Sprintf("profile_%s.csv", timestamp)
+	file, err := os.Create(filename)
+	if err != nil {
+		panic(err)
+	}
+	err = gocsv.MarshalFile(&functionCalls, file)
+	if err != nil {
+		panic(err)
+	}
+
 	return functionCalls, nil
 }

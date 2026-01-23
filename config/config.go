@@ -10,13 +10,11 @@ import (
 )
 
 type Config struct {
-	FileName        string
-	NoVenv          bool
-	PythonPath      string
-	OutputMarkdown  bool
-	Template        string
-	IncludeBuiltins bool
-	SortBy          string
+	FileName       string
+	NoVenv         bool
+	PythonPath     string
+	OutputMarkdown bool
+	Template       string
 }
 
 func MakeConfig() *Config {
@@ -26,8 +24,6 @@ func MakeConfig() *Config {
 	flag.StringVar(&conf.PythonPath, "PythonPath", getDefaultPython(), "path to python")
 	flag.BoolVar(&conf.OutputMarkdown, "outputMarkdown", false, "output markdown")
 	flag.StringVar(&conf.Template, "template", "", "path to markdown template")
-	flag.BoolVar(&conf.IncludeBuiltins, "includeBuiltins", true, "includeBuiltins")
-	flag.StringVar(&conf.SortBy, "sortby", "", "sortby")
 	flag.StringVar(&conf.FileName, "filename", "", "name of file")
 	flag.Parse()
 

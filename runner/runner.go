@@ -9,10 +9,11 @@ import (
 
 func Run(conf *config.Config) string {
 	python := conf.PythonPath
+	file := conf.FileName
 	if conf.NoVenv {
 		python = "python"
 	}
-	cmd := exec.Command(python, "-m", "cProfile", "test.py")
+	cmd := exec.Command(python, "-m", "cProfile", file)
 	output, err := cmd.Output()
 	if err != nil {
 		// TODO: handle this err

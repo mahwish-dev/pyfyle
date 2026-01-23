@@ -10,6 +10,7 @@ import (
 )
 
 type Config struct {
+	FileName        string
 	NoVenv          bool
 	PythonPath      string
 	OutputMarkdown  bool
@@ -27,6 +28,7 @@ func MakeConfig() *Config {
 	flag.StringVar(&conf.Template, "template", "", "path to markdown template")
 	flag.BoolVar(&conf.IncludeBuiltins, "includeBuiltins", true, "includeBuiltins")
 	flag.StringVar(&conf.SortBy, "sortby", "", "sortby")
+	flag.StringVar(&conf.FileName, "filename", "", "name of file")
 	flag.Parse()
 
 	return &conf

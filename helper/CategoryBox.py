@@ -22,5 +22,8 @@ class FuncProgBar(Widget):
 				self.df.astype(str).to_numpy().tolist()
 			)
 
-		yield table
+		if self.df.empty:
+			yield Label(f"No {self.title} functions.")
+		else: 
+			yield table
 

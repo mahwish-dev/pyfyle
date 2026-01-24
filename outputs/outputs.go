@@ -4,6 +4,7 @@ package outputs
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) error {
 	now := time.Now()
 
-	timestamp := now.Format("2006-01-02_15-04-05")
+	timestamp := now.Format("2006-01-02T15:04:05-07:00")
 
 	filenameCSV := fmt.Sprintf("profile_%s.csv", timestamp)
 
@@ -26,16 +27,38 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	if err != nil {
 		return err
 	}
-	filenameMD := fmt.Sprintf("profile_%s.md", timestamp)
-	err = createMD(filenameMD, functionCalls)
-	if err != nil {
-		return err
+	if config.OutputMarkdown {
+
+		err = createMD(timestamp, functionCalls)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
-func createMD(filename string, data []*parse.FunctionCall) error {
-	fileMD, err := os.Create(filename)
+func createMD(timestamp string, data []*parse.FunctionCall) error {
+	filename := fmt.Sprintf("profile_%s.md", timestamp)
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	path := filepath.Join(cwd, "site", "content", "posts", filename)
+	fmt.Println(path)
+
+	fileMD, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	format := `+++
+	title = 'My First Post'
+	date = %s
+	draft = true
++++
+	`
+
+	format = fmt.Sprintf(format, timestamp)
+	_, err = fileMD.WriteString(format)
 	if err != nil {
 		return err
 	}

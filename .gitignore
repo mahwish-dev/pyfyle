@@ -9,4 +9,5 @@ abc.csv
 
 # Virtual environments
 .venv
-site
+site/
+csv/

@@ -8,12 +8,15 @@ import sys
 class Pyfyle(App):
 
     CSS_PATH = "styles.tcss"
-    BINDINGS = [("b", "builtin_togg", "Toggle Builtin"),
-                ("o", "others_togg", "Toggle Others")]
+    BINDINGS = [("t", "table_togg", "Toggle Tables"),
+                ("x", "time_togg", "Toggle between tottime and cumtime")]
     TITLE = "Pyfyle"
 
     def __init__(self):
         super().__init__()
+        self.mode = "tottime" # Initial mode
+        self.tot_time = 0
+        self.cum_time = 0
 
 
     def compose(self):
@@ -40,24 +43,39 @@ class Pyfyle(App):
 
                 user_func_df = df[~(builtin_mask | c_ext_mask)].copy()
 
-                yield FuncProgBar("User-defined", user_func_df, _id="panel1")
-                yield FuncProgBar("Builtin", builtins_df, _id="panel2")
-                yield FuncProgBar("Others", c_extensions_df, _id="panel3")
+                tot_time = df['tottime'].sum()
+                cum_time = df['cumtime'].sum()
+                self.tot_time = tot_time
+                self.cum_time = cum_time
+
+                yield FuncProgBar("User-defined", user_func_df, _id="panel1", tot_time=tot_time, cum_time=cum_time)
+                yield FuncProgBar("Builtin", builtins_df, _id="panel2", tot_time=tot_time, cum_time=cum_time)
+                yield FuncProgBar("Others", c_extensions_df, _id="panel3", tot_time=tot_time, cum_time=cum_time)
 
             yield Footer()
 
 
-    def action_builtin_togg(self) -> None:      
-        panel = self.query_one("#panel2")
-        panel.styles.display = "none" if panel.styles.display == "block" else "block"
-    def action_others_togg(self) -> None:
-        panel = self.query_one("#panel3")
-        panel.styles.display = "none" if panel.styles.display == "block" else "block"
+    def action_table_togg(self) -> None:                  
+        for collapsible in self.query(Collapsible):
+            collapsible.collapsed = not collapsible.collapsed
+
+    def action_time_togg(self) -> None:
+        # 1. Flip the mode
+        self.mode = "cumtime" if self.mode == "tottime" else "tottime"
+
+        # 2. Update the bars using the data we "tucked away" inside them
+        for bar in self.query(".progress-bar"):
+            if self.mode == "cumtime":
+                bar.total = self.cum_time
+                bar.update(progress=bar.cumtime_val)
+            else:
+                bar.total = self.tot_time
+                bar.update(progress=bar.tottime_val)
 
     def on_checkbox_changed(self, event) -> None:
         if event.checkbox.id == "cb_ud":
             panel = self.query_one("#panel1")
-            panel.display = "none" if panel.styles.display == "block" else "block"
+            panel.styles.display = "none" if panel.styles.display == "block" else "block"
         if event.checkbox.id == "cb_bi":
             panel = self.query_one("#panel2")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"

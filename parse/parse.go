@@ -17,21 +17,27 @@ type FunctionCall struct {
 	CumtimePercall string `csv:"cumtime_percall"`
 }
 
-func Parse(rawOutput string) ([]*FunctionCall, error) {
+type ProfileRun string
+
+func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	lines := strings.Split(rawOutput, "\n")
 	callsRe := regexp.MustCompile(`(\d+) function calls in (\d+\.\d+) seconds`)
 	lineNoRe := regexp.MustCompile(`:(\d+)\(`)
 	fileNameRe := regexp.MustCompile(`^([^:]+):`)
 	functionNameRe := regexp.MustCompile(`\(([^)]+)\)$`)
 	breakIndex := 0
+	var pr ProfileRun
 	for i, line := range lines {
 		matches := callsRe.FindStringSubmatch(line)
 		if len(matches) > 0 {
 			breakIndex = i
+			pr = ProfileRun(matches[0])
+
 			break
 		}
 
 	}
+
 	lines = lines[breakIndex+5:]
 	for i, line := range lines {
 		if strings.TrimSpace(line) == "" {
@@ -79,5 +85,5 @@ func Parse(rawOutput string) ([]*FunctionCall, error) {
 
 	}
 
-	return functionCalls, nil
+	return functionCalls, pr, nil
 }

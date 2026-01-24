@@ -16,7 +16,7 @@ import (
 	"github.com/olekukonko/tablewriter/renderer"
 )
 
-func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) error {
+func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, config config.Config) error {
 	now := time.Now()
 
 	timestamp := now.Format("2006-01-02T15:04:05-07:00")
@@ -33,7 +33,7 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	}
 	if config.OutputMarkdown {
 
-		err = createMD(timestamp, cwd, functionCalls)
+		err = createMD(timestamp, cwd, functionCalls, pr)
 		if err != nil {
 			return err
 		}
@@ -41,22 +41,25 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	return nil
 }
 
-func createMD(timestamp string, cwd string, data []*parse.FunctionCall) error {
+func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse.ProfileRun) error {
 	filename := fmt.Sprintf("profile_%s.md", timestamp)
 	path := filepath.Join(cwd, "site", "content", "posts", filename)
-	fmt.Println(path)
 
 	fileMD, err := os.Create(path)
 	if err != nil {
 		return err
 	}
 	format := `+++
-	title = 'My First Post'
+	title = 'Profile Run On : %s'
 	date = %s
 	draft = true
-+++`
++++
 
-	format = fmt.Sprintf(format, timestamp)
+%s
+
+`
+
+	format = fmt.Sprintf(format, timestamp, timestamp, pr)
 	_, err = fileMD.WriteString(format)
 	if err != nil {
 		return err

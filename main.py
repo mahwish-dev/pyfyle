@@ -29,6 +29,7 @@ class Pyfyle(App):
                 with Horizontal(id="func_cat"):
                     yield Checkbox("User-defined", id="cb_ud")
                     yield Checkbox("Builtin", id="cb_bi")
+                    yield Checkbox("Frozen", id="cb_fr")
                     yield Checkbox("Others", id="cb_oth")
 
                 
@@ -39,10 +40,13 @@ class Pyfyle(App):
                 builtin_mask = df['function'].str.contains('built-in method', na=False)
                 builtins_df = df[builtin_mask].copy()
 
-                c_ext_mask = df['function'].str.contains(r"<method '", na=False)
+                c_ext_mask = df['function'].str.contains(r"method '", na=False)
                 c_extensions_df = df[c_ext_mask].copy()
 
-                user_func_df = df[~(builtin_mask | c_ext_mask)].copy()
+                frozen_mask = df["filename"].str.startswith("<frozen", na=False)
+                frozen_df = df[frozen_mask].copy()
+
+                user_func_df = df[~(builtin_mask | c_ext_mask | frozen_mask)].copy()
 
                 tot_time = df['tottime'].sum()
                 cum_time = df['cumtime'].sum()
@@ -53,7 +57,8 @@ class Pyfyle(App):
 
                 yield FuncProgBar("User-defined", user_func_df, _id="panel1", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
                 yield FuncProgBar("Builtin", builtins_df, _id="panel2", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
-                yield FuncProgBar("Others", c_extensions_df, _id="panel3", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
+                yield FuncProgBar("Frozen", frozen_df, _id="panel3", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
+                yield FuncProgBar("Others", c_extensions_df, _id="panel4", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
 
             yield Footer()
 
@@ -87,8 +92,11 @@ class Pyfyle(App):
         if event.checkbox.id == "cb_bi":
             panel = self.query_one(".panel2")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
-        if event.checkbox.id == "cb_oth":
+        if event.checkbox.id == "cb_fr":
             panel = self.query_one(".panel3")
+            panel.styles.display = "none" if panel.styles.display == "block" else "block"
+        if event.checkbox.id == "cb_oth":
+            panel = self.query_one(".panel4")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
 
     def on_mount(self) -> None:

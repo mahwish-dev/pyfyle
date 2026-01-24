@@ -81,7 +81,10 @@ class FuncProgBar(Widget):
 
 		was_collapsed = self.query_one(Collapsible).collapsed
 
-		bars_area = self.query_one(".bars-area", Vertical)
+		try:
+			bars_area = self.query_one(".bars-area", Vertical)
+		except: # that is there are no bars
+			return
 		bars_area.remove_children()
 
 		current_total = self.df[self.mode].sum()

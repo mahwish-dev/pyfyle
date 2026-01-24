@@ -17,14 +17,20 @@ type FunctionCall struct {
 	CumtimePercall string `csv:"cumtime_percall"`
 }
 
+type filenameLineNoFunc struct {
+	Filename string
+	LineNo   string
+	Function string
+}
+
 type ProfileRun string
 
 func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	lines := strings.Split(rawOutput, "\n")
 	callsRe := regexp.MustCompile(`(\d+) function calls in (\d+\.\d+) seconds`)
-	lineNoRe := regexp.MustCompile(`:(\d+)\(`)
-	fileNameRe := regexp.MustCompile(`^([^:]+):`)
-	functionNameRe := regexp.MustCompile(`\(([^)]+)\)$`)
+	// lineNoRe := regexp.MustCompile(`:(\d+)\(`)
+	// fileNameRe := regexp.MustCompile(`^([^:]+):`)
+	// functionNameRe := regexp.MustCompile(`\(([^)]+)\)$`)
 	breakIndex := 0
 	var pr ProfileRun
 	for i, line := range lines {
@@ -49,9 +55,6 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	functionCalls := []*FunctionCall{}
 
 	for _, line := range lines {
-		lineNum := "~"
-		fileName := "~"
-		var functionName string
 		fc := FunctionCall{}
 		line = strings.TrimSpace(line)
 		vals := strings.SplitN(line, "    ", 6)
@@ -59,31 +62,38 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 
 		vals = append(vals[:len(vals)-1], lastTwo...)
 		lastVal := vals[5]
-		matches := lineNoRe.FindStringSubmatch(lastVal)
-		if len(matches) >= 2 {
-			lineNum = matches[1]
-		}
-		matches = fileNameRe.FindStringSubmatch(lastVal)
-		if len(matches) > 1 {
-			fileName = matches[1]
-			fileNameMatches := functionNameRe.FindStringSubmatch(lastVal)
-			functionName = fileNameMatches[1]
-
-		} else {
-			functionName = lastVal
-		}
+		flf := parseLastColumn(lastVal)
 		fc.Ncalls = vals[0]
 		fc.Tottime = vals[1]
 		fc.TottimePercall = vals[2]
 		fc.Cumtime = vals[3]
 		fc.CumtimePercall = vals[4]
-		fc.Filename = fileName
-		fc.LineNo = lineNum
-		fc.Function = functionName
+		fc.Filename = flf.Filename
+		fc.LineNo = flf.LineNo
+		fc.Function = flf.Function
 
 		functionCalls = append(functionCalls, &fc)
 
 	}
 
 	return functionCalls, pr, nil
+}
+
+func parseLastColumn(val string) filenameLineNoFunc {
+	out := filenameLineNoFunc{Filename: "~", LineNo: "~", Function: "~"}
+	if val[0] == '{' {
+		out.Function = val
+	} else {
+		filnameIndex := strings.IndexRune(val, ':')
+		filename := val[:filnameIndex]
+		out.Filename = filename
+		remaining := val[filnameIndex+1:]
+		lineNoIndex := strings.IndexRune(remaining, '(')
+		out.LineNo = remaining[:lineNoIndex]
+		remaining = remaining[lineNoIndex+1:]
+		remaining = remaining[:len(remaining)-1]
+		out.Function = remaining
+	}
+
+	return out
 }

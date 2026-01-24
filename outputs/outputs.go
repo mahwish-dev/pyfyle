@@ -69,7 +69,11 @@ func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse
 		function := fc.Function
 		function = strings.ReplaceAll(function, "<", "\\<")
 		function = strings.ReplaceAll(function, ">", "\\>")
+		filename := fc.Filename
+		filename = strings.ReplaceAll(filename, "<", "\\<")
+		filename = strings.ReplaceAll(filename, ">", "\\>")
 		data[i].Function = function
+		data[i].Filename = filename
 
 	}
 	table := tablewriter.NewTable(fileMD, tablewriter.WithRenderer(renderer.NewMarkdown()))

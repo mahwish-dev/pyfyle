@@ -86,8 +86,6 @@ func parseLastColumn(val string) filenameLineNoFunc {
 	} else {
 		filnameIndex := strings.IndexRune(val, ':')
 		filename := val[:filnameIndex]
-		filename = strings.ReplaceAll(filename, "<", "\\<")
-		filename = strings.ReplaceAll(filename, ">", "\\>")
 		out.Filename = filename
 		remaining := val[filnameIndex+1:]
 		lineNoIndex := strings.IndexRune(remaining, '(')

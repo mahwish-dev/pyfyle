@@ -1,11 +1,11 @@
 from textual.widgets import Collapsible, Label, DataTable, ProgressBar
 from textual.widget import Widget
-from textual.containers import Grid, Horizontal
+from textual.containers import Grid, Horizontal, Vertical
 
 import pandas as pd
 
 class FuncProgBar(Widget):
-	def __init__(self, title:str, df:pd.DataFrame, _id:str, tot_time:int, cum_time:int):
+	def __init__(self, title:str, df:pd.DataFrame, _id:str, tot_time:int, cum_time:int, total_ncalls:int):
 		super().__init__()
 		self.title = title
 		self.df = df
@@ -13,6 +13,7 @@ class FuncProgBar(Widget):
 		self.tot_time = tot_time
 		self.cum_time = cum_time
 		self.mode = "tottime"
+		self.total_ncalls = total_ncalls
 
 	def prettify_text(self, txt:str):
 		if self.title == "Builtin":
@@ -30,18 +31,23 @@ class FuncProgBar(Widget):
 
 			self.df = self.df.sort_values(by=self.mode, ascending=False)
 
-			for row in self.df.itertuples():
-				with Horizontal():
-					prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
-					prog_bar.update(progress=row.tottime)
-					prog_bar.tottime_val = row.tottime
-					prog_bar.cumtime_val = row.cumtime
-					prog_bar.ncalls_val = row.ncalls
-					yield prog_bar
-					yield Label(f" {self.prettify_text(row.function)}")
+			i = 0
+			with Vertical(classes="bars-area"):
+				for row in self.df.itertuples():
+					with Horizontal(classes="bars-area"):
+						prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
+						prog_bar.update(progress=row.tottime)
+						prog_bar.tottime_val = row.tottime
+						prog_bar.cumtime_val = row.cumtime
+						prog_bar.ncalls_val = row.ncalls
+						yield prog_bar
+						yield Label(f" {self.prettify_text(row.function)}")
+						i += 1
+					if i == 5:
+						break
 
 
-			with Collapsible(title=f"[b]{self.title}[/b]   Total: [i]{self.df['tottime'].sum():.3f}[/i]", collapsed=True, classes=self._id):
+			with Collapsible(title=f"[b]{self.title}[/b] | Total: [i]{self.df['tottime'].sum():.3f}[/i]", collapsed=True, classes=self._id):
 				table = DataTable(classes="tables")
 				table.add_columns(*self.df.columns.astype(str))
 				table.add_rows(
@@ -51,49 +57,55 @@ class FuncProgBar(Widget):
 		
 				yield table
 
+	def build_prog_bar(self, row) -> ProgressBar:
+		# "tottime", "cumtime", "ncalls"
+		if self.mode == "tottime":
+			prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
+			prog_bar.update(progress=row.tottime)
+		elif self.mode == "cumtime":
+			prog_bar = ProgressBar(total=self.cum_time, classes="progress-bar", show_eta=False)
+			prog_bar.update(progress=row.cumtime)
+		else:
+			prog_bar = ProgressBar(total=self.total_ncalls, classes="progress-bar", show_eta=False)
+			prog_bar.update(progress=row.ncalls)
+
+		prog_bar.tottime_val = row.tottime
+		prog_bar.cumtime_val = row.cumtime
+		prog_bar.ncalls_val = row.ncalls
+
+		return prog_bar
 
 	def rebuild_bars(self, mode) -> None:
 		self.mode = mode
-
 		self.df = self.df.sort_values(by=self.mode, ascending=False)
 
-		container = self.query_one(f'.{self._id}')
+		was_collapsed = self.query_one(Collapsible).collapsed
 
-		if self.mode == "ncalls":
-			current_total = self.df['ncalls'].sum()
-		elif self.mode == "cumtime":
-			current_total = self.df['cumtime'].sum()
-		else:
-			current_total = self.df['tottime'].sum()
+		bars_area = self.query_one(".bars-area", Vertical)
+		bars_area.remove_children()
 
-		self.remove_children()
+		current_total = self.df[self.mode].sum()
 
+		i = 0
 		with self.app.batch_update():
-
 			for row in self.df.itertuples():
 
 				horiz = Horizontal()
-				self.mount(horiz)
+				bars_area.mount(horiz)
 
-				prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
-				prog_bar.update(progress=row.tottime)
-				prog_bar.tottime_val = row.tottime
-				prog_bar.cumtime_val = row.cumtime
-				prog_bar.ncalls_val = row.ncalls
+				prog_bar = self.build_prog_bar(row)
 						
 				horiz.mount(prog_bar)
 				horiz.mount(Label(f" {self.prettify_text(row.function)}"))
 
-				
+				i += 1
+				if i == 5:
+					break
 
-			collap = Collapsible(title=f"[b]{self.title}[/b] | Total: [i]{self.df['tottime'].sum():.3f}[/i]", collapsed=True, classes=self._id)
+		table = self.query_one(".tables", DataTable)
+		table.clear(columns=True) # Clear columns and rows
+		table.add_columns(*self.df.columns.astype(str))
+		table.add_rows(self.df.astype(str).to_numpy().tolist())
 
-			table = DataTable(classes="tables")
-			table.add_columns(*self.df.columns.astype(str))
-			table.add_rows(
-				self.df.astype(str).to_numpy().tolist()
-			)
-			
-			self.mount(collap)
-			collap.mount(table)
-
+		collap = self.query_one(Collapsible)
+		collap.title = f"[b]{self.title}[/b] | Total: [i]{self.df[self.mode].sum():.3f}[/i]"

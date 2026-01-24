@@ -49,9 +49,9 @@ class Pyfyle(App):
                 self.cum_time = cum_time
                 self.total_ncalls = total_ncalls
 
-                yield FuncProgBar("User-defined", user_func_df, _id="panel1", tot_time=tot_time, cum_time=cum_time)
-                yield FuncProgBar("Builtin", builtins_df, _id="panel2", tot_time=tot_time, cum_time=cum_time)
-                yield FuncProgBar("Others", c_extensions_df, _id="panel3", tot_time=tot_time, cum_time=cum_time)
+                yield FuncProgBar("User-defined", user_func_df, _id="panel1", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
+                yield FuncProgBar("Builtin", builtins_df, _id="panel2", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
+                yield FuncProgBar("Others", c_extensions_df, _id="panel3", tot_time=tot_time, cum_time=cum_time, total_ncalls=total_ncalls)
 
             yield Footer()
 

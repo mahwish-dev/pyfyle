@@ -27,3 +27,6 @@ Horizontal {
 ProgressBar > Bar > .bar--bar {
     color: $accent;
 }
+Vertical {
+    height: auto;
+}

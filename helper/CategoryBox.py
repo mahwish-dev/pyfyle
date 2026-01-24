@@ -40,8 +40,10 @@ class FuncProgBar(Widget):
 						prog_bar.tottime_val = row.tottime
 						prog_bar.cumtime_val = row.cumtime
 						prog_bar.ncalls_val = row.ncalls
-						yield prog_bar
-						yield Label(f" {self.prettify_text(row.function)}")
+
+						if prog_bar.progress != 0:
+							yield prog_bar
+							yield Label(f" {self.prettify_text(row.function)}")
 						i += 1
 					if i == 5:
 						break
@@ -97,9 +99,10 @@ class FuncProgBar(Widget):
 				bars_area.mount(horiz)
 
 				prog_bar = self.build_prog_bar(row)
-						
-				horiz.mount(prog_bar)
-				horiz.mount(Label(f" {self.prettify_text(row.function)}"))
+				
+				if prog_bar.progress != 0:
+					horiz.mount(prog_bar)
+					horiz.mount(Label(f" {self.prettify_text(row.function)}"))
 
 				i += 1
 				if i == 5:

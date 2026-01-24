@@ -68,6 +68,7 @@ func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse
 	for i, fc := range data {
 		function := fc.Function
 		function = strings.ReplaceAll(function, "<", "\\<")
+		function = strings.ReplaceAll(function, "_", "\\_")
 		function = strings.ReplaceAll(function, ">", "\\>")
 		filename := fc.Filename
 		filename = strings.ReplaceAll(filename, "<", "\\<")

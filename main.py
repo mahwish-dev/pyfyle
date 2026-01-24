@@ -10,7 +10,7 @@ class Pyfyle(App):
     CSS_PATH = "styles.tcss"
     BINDINGS = [("t", "table_togg", "Toggle Tables"),
                 ("x", "time_togg", "Toggle between tottime,cumtime,ncalls")]
-    TITLE = "Pyfyle"
+    TITLE = f"Pyfyle: Sorted by tottime"
 
     def __init__(self):
         super().__init__()
@@ -20,6 +20,8 @@ class Pyfyle(App):
 
 
     def compose(self):
+        csv_path = sys.argv[1]
+        self.sub_title = f"Analyzing: {csv_path}"
         with Vertical(id="root"):
             yield Header()
 
@@ -29,7 +31,7 @@ class Pyfyle(App):
                     yield Checkbox("Builtin", id="cb_bi")
                     yield Checkbox("Others", id="cb_oth")
 
-                csv_path = sys.argv[1]
+                
                 df = pd.read_csv(csv_path)
 
                 df.columns = df.columns.str.strip()
@@ -75,6 +77,8 @@ class Pyfyle(App):
 
         for category in self.query(FuncProgBar):
             category.rebuild_bars(self.mode)
+
+        self.title = f"Pyfyle: Sorted by {self.mode}"
 
     def on_checkbox_changed(self, event) -> None:
         if event.checkbox.id == "cb_ud":

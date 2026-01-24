@@ -31,33 +31,34 @@ class FuncProgBar(Widget):
 
 			self.df = self.df.sort_values(by=self.mode, ascending=False)
 
-			i = 0
-			with Vertical(classes="bars-area"):
-				for row in self.df.itertuples():
-					with Horizontal(classes="bars-area"):
-						prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
-						prog_bar.update(progress=row.tottime)
-						prog_bar.tottime_val = row.tottime
-						prog_bar.cumtime_val = row.cumtime
-						prog_bar.ncalls_val = row.ncalls
+			with Vertical(classes=self._id):
+				i = 0
+				with Vertical(classes="bars-area"):
+					for row in self.df.itertuples():
+						with Horizontal(classes="bars-area"):
+							prog_bar = ProgressBar(total=self.tot_time, classes="progress-bar", show_eta=False)
+							prog_bar.update(progress=row.tottime)
+							prog_bar.tottime_val = row.tottime
+							prog_bar.cumtime_val = row.cumtime
+							prog_bar.ncalls_val = row.ncalls
 
-						if prog_bar.progress != 0:
-							yield prog_bar
-							yield Label(f" {self.prettify_text(row.function)}")
-						i += 1
-					if i == 5:
-						break
+							if prog_bar.progress != 0:
+								yield prog_bar
+								yield Label(f" {self.prettify_text(row.function)}")
+							i += 1
+						if i == 5:
+							break
 
 
-			with Collapsible(title=f"[b]{self.title}[/b] | Total: [i]{self.df['tottime'].sum():.3f}[/i]", collapsed=True, classes=self._id):
-				table = DataTable(classes="tables")
-				table.add_columns(*self.df.columns.astype(str))
-				table.add_rows(
-					self.df.astype(str).to_numpy().tolist()
-				)
+				with Collapsible(title=f"[b]{self.title}[/b] | Total: [i]{self.df['tottime'].sum():.3f}[/i]", collapsed=True, classes=self._id):
+					table = DataTable(classes="tables")
+					table.add_columns(*self.df.columns.astype(str))
+					table.add_rows(
+						self.df.astype(str).to_numpy().tolist()
+					)
 
-		
-				yield table
+			
+					yield table
 
 	def build_prog_bar(self, row) -> ProgressBar:
 		# "tottime", "cumtime", "ncalls"

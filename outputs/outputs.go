@@ -20,16 +20,20 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	now := time.Now()
 
 	timestamp := now.Format("2006-01-02T15:04:05-07:00")
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
 
 	filenameCSV := fmt.Sprintf("profile_%s.csv", timestamp)
 
-	err := createCSV(filenameCSV, &functionCalls)
+	err = createCSV(filenameCSV, cwd, &functionCalls)
 	if err != nil {
 		return err
 	}
 	if config.OutputMarkdown {
 
-		err = createMD(timestamp, functionCalls)
+		err = createMD(timestamp, cwd, functionCalls)
 		if err != nil {
 			return err
 		}
@@ -37,12 +41,8 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	return nil
 }
 
-func createMD(timestamp string, data []*parse.FunctionCall) error {
+func createMD(timestamp string, cwd string, data []*parse.FunctionCall) error {
 	filename := fmt.Sprintf("profile_%s.md", timestamp)
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
 	path := filepath.Join(cwd, "site", "content", "posts", filename)
 	fmt.Println(path)
 
@@ -54,8 +54,7 @@ func createMD(timestamp string, data []*parse.FunctionCall) error {
 	title = 'My First Post'
 	date = %s
 	draft = true
-+++
-	`
++++`
 
 	format = fmt.Sprintf(format, timestamp)
 	_, err = fileMD.WriteString(format)
@@ -83,8 +82,9 @@ func createMD(timestamp string, data []*parse.FunctionCall) error {
 	return nil
 }
 
-func createCSV(filename string, data *[]*parse.FunctionCall) error {
-	fileCSV, err := os.Create(filename)
+func createCSV(filename string, cwd string, data *[]*parse.FunctionCall) error {
+	path := filepath.Join(cwd, "csv", filename)
+	fileCSV, err := os.Create(path)
 	if err != nil {
 		return err
 	}

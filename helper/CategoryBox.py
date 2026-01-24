@@ -25,7 +25,7 @@ class FuncProgBar(Widget):
 
 	def compose(self):
 		if self.df.empty:
-			with Collapsible(title=self.title, collapsed=True, id=self._id):
+			with Collapsible(title=self.title, collapsed=True, classes=self._id):
 				yield Label(f"No {self.title} functions.")
 		else: 
 

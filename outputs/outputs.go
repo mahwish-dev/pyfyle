@@ -21,34 +21,51 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, config config.Config) er
 	timestamp := now.Format("2006-01-02_15-04-05")
 
 	filenameCSV := fmt.Sprintf("profile_%s.csv", timestamp)
+
+	err := createCSV(filenameCSV, &functionCalls)
+	if err != nil {
+		return err
+	}
 	filenameMD := fmt.Sprintf("profile_%s.md", timestamp)
-	fileCSV, err := os.Create(filenameCSV)
+	err = createMD(filenameMD, functionCalls)
 	if err != nil {
 		return err
 	}
-	fileMD, err := os.Create(filenameMD)
-	if err != nil {
-		return err
-	}
-	err = gocsv.MarshalFile(&functionCalls, fileCSV)
+	return nil
+}
+
+func createMD(filename string, data []*parse.FunctionCall) error {
+	fileMD, err := os.Create(filename)
 	if err != nil {
 		return err
 	}
 
-	for i, fc := range functionCalls {
+	for i, fc := range data {
 		function := fc.Function
 		function = strings.ReplaceAll(function, "<", "\\<")
 		function = strings.ReplaceAll(function, ">", "\\>")
-		functionCalls[i].Function = function
+		data[i].Function = function
 
 	}
 	table := tablewriter.NewTable(fileMD, tablewriter.WithRenderer(renderer.NewMarkdown()))
 	table.Header([]string{"Filename", "LineNo", "Function", "Ncalls", "Tottime", "TottimePercall", "Cumtime", "CumtimePercall"})
-	err = table.Bulk(functionCalls)
+	err = table.Bulk(data)
 	if err != nil {
 		return err
 	}
 	err = table.Render()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createCSV(filename string, data *[]*parse.FunctionCall) error {
+	fileCSV, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	err = gocsv.MarshalFile(data, fileCSV)
 	if err != nil {
 		return err
 	}

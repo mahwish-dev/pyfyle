@@ -55,9 +55,6 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	functionCalls := []*FunctionCall{}
 
 	for _, line := range lines {
-		// lineNum := "~"
-		// fileName := "~"
-		// var functionName string
 		fc := FunctionCall{}
 		line = strings.TrimSpace(line)
 		vals := strings.SplitN(line, "    ", 6)
@@ -65,19 +62,6 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 
 		vals = append(vals[:len(vals)-1], lastTwo...)
 		lastVal := vals[5]
-		// matches := lineNoRe.FindStringSubmatch(lastVal)
-		// if len(matches) >= 2 {
-		// 	lineNum = matches[1]
-		// }
-		// matches = fileNameRe.FindStringSubmatch(lastVal)
-		// if len(matches) > 1 {
-		// 	fileName = matches[1]
-		// 	fileNameMatches := functionNameRe.FindStringSubmatch(lastVal)
-		// 	functionName = fileNameMatches[1]
-		//
-		// } else {
-		// 	functionName = lastVal
-		// }
 		flf := parseLastColumn(lastVal)
 		fc.Ncalls = vals[0]
 		fc.Tottime = vals[1]

@@ -9,7 +9,7 @@ class Pyfyle(App):
 
     CSS_PATH = "styles.tcss"
     BINDINGS = [("t", "table_togg", "Toggle Tables"),
-                ("x", "time_togg", "Toggle between tottime and cumtime")]
+                ("x", "time_togg", "Toggle between tottime,cumtime,ncalls")]
     TITLE = "Pyfyle"
 
     def __init__(self):
@@ -24,7 +24,6 @@ class Pyfyle(App):
             yield Header()
 
             with VerticalScroll(id="content"):
-                yield Static("Function categories:")
                 with Horizontal(id="func_cat"):
                     yield Checkbox("User-defined", id="cb_ud")
                     yield Checkbox("Builtin", id="cb_bi")
@@ -45,8 +44,10 @@ class Pyfyle(App):
 
                 tot_time = df['tottime'].sum()
                 cum_time = df['cumtime'].sum()
+                total_ncalls = df['ncalls'].sum()
                 self.tot_time = tot_time
                 self.cum_time = cum_time
+                self.total_ncalls = total_ncalls
 
                 yield FuncProgBar("User-defined", user_func_df, _id="panel1", tot_time=tot_time, cum_time=cum_time)
                 yield FuncProgBar("Builtin", builtins_df, _id="panel2", tot_time=tot_time, cum_time=cum_time)
@@ -60,28 +61,34 @@ class Pyfyle(App):
             collapsible.collapsed = not collapsible.collapsed
 
     def action_time_togg(self) -> None:
-        # 1. Flip the mode
-        self.mode = "cumtime" if self.mode == "tottime" else "tottime"
+        modes = ["tottime", "cumtime", "ncalls"]
+        
+        current_index = modes.index(self.mode)
+        self.mode = modes[(current_index + 1) % len(modes)]
 
-        # 2. Update the bars using the data we "tucked away" inside them
-        for bar in self.query(".progress-bar"):
-            if self.mode == "cumtime":
-                bar.total = self.cum_time
-                bar.update(progress=bar.cumtime_val)
-            else:
-                bar.total = self.tot_time
-                bar.update(progress=bar.tottime_val)
+        if self.mode == "ncalls":
+            new_total = self.total_ncalls 
+        elif self.mode == "cumtime":
+            new_total = self.cum_time
+        else:
+            new_total = self.tot_time
+
+        for category in self.query(FuncProgBar):
+            category.rebuild_bars(self.mode)
 
     def on_checkbox_changed(self, event) -> None:
         if event.checkbox.id == "cb_ud":
-            panel = self.query_one("#panel1")
+            panel = self.query_one(".panel1")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
         if event.checkbox.id == "cb_bi":
-            panel = self.query_one("#panel2")
+            panel = self.query_one(".panel2")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
         if event.checkbox.id == "cb_oth":
-            panel = self.query_one("#panel3")
+            panel = self.query_one(".panel3")
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
+
+    def on_mount(self) -> None:
+        self.theme = "nord"
 
 
 

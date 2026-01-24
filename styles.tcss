@@ -2,20 +2,15 @@ Header {
     text-style: bold;
 }
 
-#func_ip {
-    content-align: center middle;
-    padding: 1; 
-
-}
-
 #func_cat {
     align-horizontal: center;
+    padding: 1;
 }
 
 #root {
-    border: heavy #f38ba8;
+    border: heavy $accent;
     padding: 0;
-    outline: #f38ba8 round;
+    outline: $accent round;
     layout: vertical;
 }
 
@@ -27,4 +22,8 @@ FuncProgBar {
 
 Horizontal {
     height: auto;
+}
+
+ProgressBar > Bar > .bar--bar {
+    color: $accent;
 }

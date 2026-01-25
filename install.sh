@@ -42,5 +42,8 @@ if gum confirm "Do you want to setup dashboard" </dev/tty; then
   git submodule add https://github.com/sid314/pyfyle-hugo-site.git site
 
 fi
+cd pyfyle || exit
+go build .
+cd ..
 
 echo "Pyfyle is installed, have a nice day"

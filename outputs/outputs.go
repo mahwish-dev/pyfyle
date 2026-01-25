@@ -16,29 +16,29 @@ import (
 	"github.com/olekukonko/tablewriter/renderer"
 )
 
-func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, config config.Config) error {
+func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, config config.Config) (string, error) {
 	now := time.Now()
 
 	timestamp := now.Format("2006-01-02T15:04:05-07:00")
 	cwd, err := os.Getwd()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	filenameCSV := fmt.Sprintf("profile_%s.csv", timestamp)
 
 	err = createCSV(filenameCSV, cwd, &functionCalls)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if config.OutputMarkdown && config.DashboardEnabled {
 
 		err = createMD(timestamp, cwd, functionCalls, pr)
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
-	return nil
+	return filenameCSV, nil
 }
 
 func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse.ProfileRun) error {

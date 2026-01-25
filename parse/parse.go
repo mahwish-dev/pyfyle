@@ -42,8 +42,15 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 		}
 
 	}
+	startIndex := 0
+	for i, line := range lines {
+		if strings.Contains(line, "ncalls") {
+			startIndex = i
+			break
+		}
+	}
 
-	lines = lines[breakIndex+5:]
+	lines = lines[startIndex+1:]
 	for i, line := range lines {
 		if strings.TrimSpace(line) == "" {
 			breakIndex = i

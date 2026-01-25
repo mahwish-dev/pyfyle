@@ -48,12 +48,19 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, con
 
 func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse.ProfileRun) error {
 	filename := fmt.Sprintf("profile_%s.md", timestamp)
-	path := filepath.Join(cwd, "site", "content", "posts", filename)
+	mdDir := filepath.Join(cwd, "site", "content", "posts")
+	err := os.MkdirAll(mdDir, 0o755)
+	if err != nil {
+		return err
+	}
+	log.Info("Created MD Directory")
+	path := filepath.Join(mdDir, filename)
 
 	fileMD, err := os.Create(path)
 	if err != nil {
 		return err
 	}
+	log.Info("Created MD File")
 	format := `+++
 	title = 'Profile Run On : %s'
 	date = %s
@@ -69,6 +76,7 @@ func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse
 	if err != nil {
 		return err
 	}
+	log.Info("Wrote title and timestamp")
 
 	for i, fc := range data {
 		function := fc.Function
@@ -88,10 +96,12 @@ func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse
 	if err != nil {
 		return err
 	}
+	log.Info("Marshalled Data")
 	err = table.Render()
 	if err != nil {
 		return err
 	}
+	log.Info("Wrote table")
 	return nil
 }
 

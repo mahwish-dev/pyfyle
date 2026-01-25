@@ -21,7 +21,7 @@ Blazingly fast CProfile frontend written in Go and Python.
 Run the following command
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/mahwish-dev/pyfyle/main/bin/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/mahwish-dev/pyfyle/main/install.sh | bash
 
 ```
 
@@ -32,5 +32,5 @@ Run `pyfyle/bin/pyfyle --filename <filename>.py`
 ## Usage
 
 - Run `pyfyle/bin/pyfyle --help` for options
-- To run the TUI alone, run `pyfyle/bin/pyfyle-viewver <filename>.csv`
+- To run the TUI alone, run `pyfyle/bin/pyfyle-viewer <filename>.csv`
 - To start the dashboard web server, run `pyfyle/bin/pyfyle-dashboard`

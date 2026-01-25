@@ -102,7 +102,11 @@ class Pyfyle(App):
             panel.styles.display = "none" if panel.styles.display == "block" else "block"
 
     def on_mount(self) -> None:
-        self.theme = "nord"
+        try:
+            theme = sys.argv[2]
+        except:
+            theme = "nord"
+        self.theme = theme
 
 
 

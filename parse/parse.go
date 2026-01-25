@@ -45,19 +45,22 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	functionCalls := []*FunctionCall{}
 
 	for _, line := range lines {
+		if line == "" {
+			break
+		}
 		fc := FunctionCall{}
 		line = strings.TrimSpace(line)
-		vals := strings.SplitN(line, "    ", 6)
-		lastTwo := strings.SplitN(strings.TrimSpace(vals[len(vals)-1]), " ", 2)
-
-		vals = append(vals[:len(vals)-1], lastTwo...)
-		lastVal := vals[5]
-		flf := parseLastColumn(lastVal)
+		vals := strings.Fields(line)
 		fc.Ncalls = vals[0]
 		fc.Tottime = vals[1]
 		fc.TottimePercall = vals[2]
 		fc.Cumtime = vals[3]
 		fc.CumtimePercall = vals[4]
+
+		remaining := vals[5:]
+		lastVal := strings.Join(remaining, " ")
+
+		flf := parseLastColumn(lastVal)
 		fc.Filename = flf.Filename
 		fc.LineNo = flf.LineNo
 		fc.Function = flf.Function

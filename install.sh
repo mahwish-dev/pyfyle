@@ -35,7 +35,9 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 else
   git clone https://github.com/mahwish-dev/pyfyle.git
 fi
-
+cd pyfyle || exit
+git pull
+cd ..
 if gum confirm "Do you want to setup dashboard" </dev/tty; then
   cd pyfyle || exit
   echo 'DashboardEnabled = true' >>pyfyle.toml

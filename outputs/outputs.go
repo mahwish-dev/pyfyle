@@ -96,14 +96,22 @@ func createMD(timestamp string, cwd string, data []*parse.FunctionCall, pr parse
 }
 
 func createCSV(filename string, cwd string, data *[]*parse.FunctionCall) error {
-	path := filepath.Join(cwd, "csv", filename)
+	csvDir := filepath.Join(cwd, "csv")
+	err := os.MkdirAll(csvDir, 0o755)
+	if err != nil {
+		return err
+	}
+	log.Info("Created CSV Directory")
+	path := filepath.Join(csvDir, filename)
 	fileCSV, err := os.Create(path)
 	if err != nil {
 		return err
 	}
+	log.Info("Created CSV File")
 	err = gocsv.MarshalFile(data, fileCSV)
 	if err != nil {
 		return err
 	}
+	log.Info("Wrote CSV File")
 	return nil
 }

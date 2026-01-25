@@ -55,11 +55,13 @@ else
   echo 'DashboardEnabled = false' >>pyfyle.toml
 fi
 cd pyfyle || exit
-chmod +x bin/pyfyle
-chmod +x bin/pyfyle-viewer
-chmod +x bin/pyfyle-dashboard
 go build .
 mv pyfyle bin/pyfyle
+cd bin || exit
+chmod +x pyfyle
+chmod +x pyfyle-viewer
+chmod +x pyfyle-dashboard
+cd ..
 cd ..
 
 gum log "Pyfyle is installed, have a nice day" --structured --level info

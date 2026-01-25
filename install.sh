@@ -46,6 +46,8 @@ if gum confirm "Do you want to setup dashboard" </dev/tty; then
   cd ..
   cd ..
 
+else
+  echo 'DashboardEnabled = false' >>pyfyle.toml
 fi
 cd pyfyle || exit
 go build .

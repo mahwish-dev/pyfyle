@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd ..
+pwd
+cd pyfyle || exit
+pwd
 uv venv
 source ".venv/bin/activate"
-cd bin/ || exit
-
+echo "$@"
 uv run "$SCRIPT_DIR/../main.py" "$@"

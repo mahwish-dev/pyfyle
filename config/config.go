@@ -42,6 +42,7 @@ func MakeConfig() *Config {
 }
 
 func getDefaultPython() string {
+	// TODO: propagate these errors
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Error(err.Error())
@@ -55,13 +56,14 @@ func getDefaultPython() string {
 }
 
 func parseToml() bool {
+	// TODO: propagate these errors
 	var v tomlConfig
 	cwd, err := os.Getwd()
 	if err != nil {
 		log.Error(err.Error())
 		return false
 	}
-	pathToToml := path.Join(cwd, "pyfyle.toml")
+	pathToToml := path.Join(cwd, "pyfyle", "pyfyle.toml")
 	bytes, err := os.ReadFile(pathToToml)
 	if err != nil {
 		log.Error(err.Error())

@@ -9,6 +9,5 @@ abc.csv
 
 # Virtual environments
 .venv
-site/
 csv/
 pyfyle.toml

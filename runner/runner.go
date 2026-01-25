@@ -2,6 +2,7 @@
 package runner
 
 import (
+	"fmt"
 	"os/exec"
 
 	"pyfyle/config"
@@ -15,6 +16,7 @@ func Run(conf *config.Config) string {
 	if conf.NoVenv {
 		python = "python"
 	}
+	log.Info(fmt.Sprintf("Going to run with python = %s", python))
 	cmd := exec.Command(python, "-m", "cProfile", file)
 	output, err := cmd.Output()
 	if err != nil {

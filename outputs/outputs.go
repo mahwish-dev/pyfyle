@@ -11,6 +11,7 @@ import (
 	"pyfyle/config"
 	"pyfyle/parse"
 
+	"github.com/charmbracelet/log"
 	"github.com/gocarina/gocsv"
 	"github.com/olekukonko/tablewriter"
 	"github.com/olekukonko/tablewriter/renderer"
@@ -32,13 +33,16 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, con
 	if err != nil {
 		return "", err
 	}
+	log.Info("Created CSV")
 	if config.OutputMarkdown && config.DashboardEnabled {
 
 		err = createMD(timestamp, cwd, functionCalls, pr)
 		if err != nil {
 			return "", err
 		}
+		log.Info("Created MD")
 	}
+	log.Info("Created outputs")
 	return filenameCSV, nil
 }
 

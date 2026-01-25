@@ -10,6 +10,8 @@ import (
 	"pyfyle/outputs"
 	"pyfyle/parse"
 	"pyfyle/runner"
+
+	"github.com/charmbracelet/log"
 )
 
 func main() {
@@ -17,11 +19,11 @@ func main() {
 	output := runner.Run(conf)
 	fc, pr, err := parse.Parse(output)
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
 	file, err := outputs.CreateOutputs(fc, pr, *conf)
 	if err != nil {
-		panic(err)
+		log.Fatal(err.Error())
 	}
 	cwd, err := os.Getwd()
 	if err != nil {

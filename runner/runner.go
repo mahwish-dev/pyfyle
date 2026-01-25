@@ -5,6 +5,8 @@ import (
 	"os/exec"
 
 	"pyfyle/config"
+
+	"github.com/charmbracelet/log"
 )
 
 func Run(conf *config.Config) string {
@@ -17,6 +19,8 @@ func Run(conf *config.Config) string {
 	output, err := cmd.Output()
 	if err != nil {
 		// TODO: handle this err
+		log.Error(err.Error())
 	}
+	log.Info("Ran Command")
 	return string(output)
 }

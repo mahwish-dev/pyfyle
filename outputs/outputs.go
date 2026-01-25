@@ -24,6 +24,7 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, con
 	if err != nil {
 		return "", err
 	}
+	cwd = filepath.Join(cwd, "pyfyle")
 
 	filenameCSV := fmt.Sprintf("profile_%s.csv", timestamp)
 

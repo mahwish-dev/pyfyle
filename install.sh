@@ -7,15 +7,15 @@ for pkg in "${REQUIRED_PKGS[@]}"; do
     exit 1
   fi
 done
-echo "All dependencies met!"
+gum log -tsl info "All dependencies met!"
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "Not currently in a git repo"
+  gum log -tsl info "Not currently in a git repo"
   if gum confirm "Do you want to initialise a repository" </dev/tty; then
     git init
   fi
 fi
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  echo "Pyfyle can be installed as a git submodule or simply cloned"
+  gum log -tsl info "Pyfyle can be installed as a git submodule or simply cloned"
   if gum confirm "Do you want to install Pyfyle as a git submodule?" </dev/tty; then
     git submodule add -f https://github.com/mahwish-dev/pyfyle.git pyfyle
   else
@@ -56,4 +56,4 @@ go build .
 mv pyfyle bin/pyfyle
 cd ..
 
-echo "Pyfyle is installed, have a nice day"
+gum log -tsl info "Pyfyle is installed, have a nice day"

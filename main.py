@@ -37,6 +37,8 @@ class Pyfyle(App):
 
                 df.columns = df.columns.str.strip()
 
+                df["ncalls"] = df["ncalls"].astype(str).apply(lambda x: int(x.split("/")[0]))
+
                 builtin_mask = df['function'].str.contains('built-in method', na=False)
                 builtins_df = df[builtin_mask].copy()
 

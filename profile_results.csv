@@ -1,5 +1,5 @@
 filename,line,function,ncalls,tottime,tottime_percall,cumtime,cumtime_percall
-~,~,{built-in method builtins.exec},1,0.000,0.000,2.000,2.000
+~,~,{built-in method builtins.exec},100/2,0.000,0.000,2.000,2.000
 test.py,1,<module>,1,0.000,0.000,2.000,2.000
 ~,~,{built-in method time.sleep},1,2.000,2.000,2.000,2.000
 <frozen importlib._bootstrap>,1349,_find_and_load,1,0.000,0.000,0.000,0.000

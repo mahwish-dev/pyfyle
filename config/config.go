@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/charmbracelet/log"
 	toml "github.com/pelletier/go-toml/v2"
 	flag "github.com/spf13/pflag"
 )
@@ -32,20 +33,24 @@ func MakeConfig() *Config {
 	flag.StringVar(&conf.Template, "template", "", "path to markdown template")
 	flag.StringVar(&conf.FileName, "filename", "", "name of file")
 	flag.Parse()
+	log.Info("Parsed Flags")
+
 	conf.DashboardEnabled = parseToml()
 
+	log.Info("Parsed Config")
 	return &conf
 }
 
 func getDefaultPython() string {
 	cwd, err := os.Getwd()
 	if err != nil {
-		// TODO: handle this err
+		log.Error(err.Error())
 	}
 	pathToPy := path.Join(cwd, ".venv", "bin", "python")
 	if _, err := os.Stat(pathToPy); errors.Is(err, os.ErrNotExist) {
 		return "python"
 	}
+	log.Info("Got default python", "Python", pathToPy)
 	return pathToPy
 }
 
@@ -53,19 +58,20 @@ func parseToml() bool {
 	var v tomlConfig
 	cwd, err := os.Getwd()
 	if err != nil {
-		// TODO: handle this err
+		log.Error(err.Error())
 		return false
 	}
 	pathToToml := path.Join(cwd, "pyfyle.toml")
 	bytes, err := os.ReadFile(pathToToml)
 	if err != nil {
-		// TODO: handle this err
+		log.Error(err.Error())
 		return false
 	}
 	err = toml.Unmarshal(bytes, &v)
 	if err != nil {
-		// TODO: handle this err
+		log.Error(err.Error())
 		return false
 	}
+	log.Info("Parsed Toml")
 	return v.DashboardEnabled
 }

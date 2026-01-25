@@ -27,9 +27,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	file = filepath.Join(cwd, "csv", file)
+	file = filepath.Join(cwd, "pyfyle", "csv", file)
 	println(file)
-	scriptPath := filepath.Join(cwd, "bin", "pyfyle-viewer.sh")
+	scriptPath := filepath.Join(cwd, "pyfyle", "bin", "pyfyle-viewer.sh")
 	bashPath, err := exec.LookPath("bash")
 	if err != nil {
 		panic("Could not find bash executable")

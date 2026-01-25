@@ -49,6 +49,7 @@ if gum confirm "Do you want to setup dashboard" </dev/tty; then
 fi
 cd pyfyle || exit
 go build .
+mv pyfyle bin/pyfyle
 cd ..
 
 echo "Pyfyle is installed, have a nice day"

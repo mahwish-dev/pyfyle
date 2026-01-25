@@ -12,6 +12,7 @@ import (
 
 func Run(conf *config.Config) string {
 	python := conf.PythonPath
+	log.Info(fmt.Sprintf("Conf python = %s", python))
 	file := conf.FileName
 	if conf.NoVenv {
 		python = "python"

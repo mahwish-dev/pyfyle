@@ -41,7 +41,7 @@ if gum confirm "Do you want to setup dashboard" </dev/tty; then
   echo 'DashboardEnabled = true' >>pyfyle.toml
   git submodule add https://github.com/sid314/pyfyle-hugo-site.git site
   cd site || exit
-  rm -rf site/
+  rm -rf themes/re-terminal
   git submodule add -f https://github.com/mirus-ua/hugo-theme-re-terminal.git themes/re-terminal
   cd ..
   cd ..

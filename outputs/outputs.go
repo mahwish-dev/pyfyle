@@ -31,7 +31,7 @@ func CreateOutputs(functionCalls []*parse.FunctionCall, pr parse.ProfileRun, con
 	if err != nil {
 		return err
 	}
-	if config.OutputMarkdown {
+	if config.OutputMarkdown && config.DashboardEnabled {
 
 		err = createMD(timestamp, cwd, functionCalls, pr)
 		if err != nil {

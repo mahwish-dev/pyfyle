@@ -52,6 +52,9 @@ else
   echo 'DashboardEnabled = false' >>pyfyle.toml
 fi
 cd pyfyle || exit
+chmod +x bin/pyfyle
+chmod +x bin/pyfyle-viewer
+chmod +x bin/pyfyle-dashboard
 go build .
 mv pyfyle bin/pyfyle
 cd ..

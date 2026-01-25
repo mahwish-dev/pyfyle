@@ -32,5 +32,5 @@ Run `pyfyle/bin/pyfyle --filename <filename>.py`
 ## Usage
 
 - Run `pyfyle/bin/pyfyle --help` for options
-- To run the TUI alone, run `pyfyle/bin/pyfyle-viewer <filename>.csv`
-- To start the dashboard web server, run `pyfyle/bin/pyfyle-dashboard`
+- To run the TUI alone, run `pyfyle/bin/pyfyle-viewer.sh <filename>.csv`
+- To start the dashboard web server, run `pyfyle/bin/pyfyle-dashboard.sh`

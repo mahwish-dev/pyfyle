@@ -59,8 +59,8 @@ go build .
 mv pyfyle bin/pyfyle
 cd bin || exit
 chmod +x pyfyle
-chmod +x pyfyle-viewer
-chmod +x pyfyle-dashboard
+chmod +x pyfyle-viewer.sh
+chmod +x pyfyle-dashboard.sh
 cd ..
 cd ..
 

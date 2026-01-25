@@ -30,7 +30,6 @@ func main() {
 		panic(err)
 	}
 	file = filepath.Join(cwd, "pyfyle", "csv", file)
-	println(file)
 	scriptPath := filepath.Join(cwd, "pyfyle", "bin", "pyfyle-viewer.sh")
 	bashPath, err := exec.LookPath("bash")
 	if err != nil {

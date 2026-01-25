@@ -4,6 +4,8 @@ package parse
 import (
 	"regexp"
 	"strings"
+
+	"github.com/charmbracelet/log"
 )
 
 type FunctionCall struct {
@@ -28,9 +30,6 @@ type ProfileRun string
 func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	lines := strings.Split(rawOutput, "\n")
 	callsRe := regexp.MustCompile(`(\d+) function calls in (\d+\.\d+) seconds`)
-	// lineNoRe := regexp.MustCompile(`:(\d+)\(`)
-	// fileNameRe := regexp.MustCompile(`^([^:]+):`)
-	// functionNameRe := regexp.MustCompile(`\(([^)]+)\)$`)
 	breakIndex := 0
 	var pr ProfileRun
 	for i, line := range lines {
@@ -75,6 +74,7 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 		functionCalls = append(functionCalls, &fc)
 
 	}
+	log.Info("Parsed Command")
 
 	return functionCalls, pr, nil
 }

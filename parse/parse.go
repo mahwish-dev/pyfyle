@@ -2,7 +2,6 @@
 package parse
 
 import (
-	"regexp"
 	"strings"
 
 	"github.com/charmbracelet/log"
@@ -29,35 +28,20 @@ type ProfileRun string
 
 func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	lines := strings.Split(rawOutput, "\n")
-	callsRe := regexp.MustCompile(`(\d+) function calls in (\d+\.\d+) seconds`)
 	breakIndex := 0
-	var pr ProfileRun
+	prLineIndex := 0
 	for i, line := range lines {
-		matches := callsRe.FindStringSubmatch(line)
-		if len(matches) > 0 {
-			breakIndex = i
-			pr = ProfileRun(matches[0])
-
-			break
+		if strings.Contains(line, "seconds") {
+			prLineIndex = i
 		}
-
-	}
-	startIndex := 0
-	for i, line := range lines {
 		if strings.Contains(line, "ncalls") {
-			startIndex = i
+			breakIndex = i + 1
 			break
 		}
 	}
+	prLine := lines[prLineIndex]
+	lines = lines[breakIndex:]
 
-	lines = lines[startIndex+1:]
-	for i, line := range lines {
-		if strings.TrimSpace(line) == "" {
-			breakIndex = i
-			break
-		}
-	}
-	lines = lines[:breakIndex]
 	functionCalls := []*FunctionCall{}
 
 	for _, line := range lines {
@@ -83,7 +67,7 @@ func Parse(rawOutput string) ([]*FunctionCall, ProfileRun, error) {
 	}
 	log.Info("Parsed Command")
 
-	return functionCalls, pr, nil
+	return functionCalls, ProfileRun(prLine), nil
 }
 
 func parseLastColumn(val string) filenameLineNoFunc {

@@ -1,6 +1,6 @@
 # Pyfyle
 
-Blazingly fast CProfile frontend witten in Go and Python.
+Blazingly fast CProfile frontend written in Go and Python.
 
 ## Features
 
